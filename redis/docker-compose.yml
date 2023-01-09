@@ -1,0 +1,100 @@
+version: '3.8'
+
+services:
+  redis_python:
+    container_name: redis_python
+    env_file:
+      - .env
+    build:
+      context: ./app
+      target: runtime
+      args:
+        - USERNAME=${USERNAME}
+        - HOMEDIR=${HOMEDIR}
+    # depends_on:
+    #   - redis_0
+    #   - sentinel_0
+    volumes:
+      - ./app:/app
+    networks:
+      - redis
+
+  redis_0:
+    container_name: redis_0
+    image: redis:7.0.7-alpine3.17
+    command: redis-server /etc/redis/redis.conf
+    env_file:
+      - .env
+    volumes:
+      - ./config/redis_0:/etc/redis/
+      - redis:/data/
+    networks:
+      - redis
+
+  redis_1:
+    container_name: redis_1
+    image: redis:7.0.7-alpine3.17
+    command: redis-server /etc/redis/redis.conf
+    depends_on:
+      - redis_0
+    env_file:
+      - .env
+    volumes:
+      - ./config/redis_1:/etc/redis/
+      - redis:/data/
+    networks:
+      - redis
+
+  redis_2:
+    container_name: redis_2
+    image: redis:7.0.7-alpine3.17
+    command: redis-server /etc/redis/redis.conf
+    depends_on:
+      - redis_0
+    env_file:
+      - .env
+    volumes:
+      - ./config/redis_2:/etc/redis/
+      - redis:/data/
+    networks:
+      - redis
+
+  sentinel_0:
+    container_name: sentinel_0
+    image: redis:7.0.7-alpine3.17
+    command: redis-sentinel /etc/redis/sentinel.conf
+    depends_on:
+      - redis_0
+    volumes:
+      - ./sentinels/sentinel_0:/etc/redis/
+    networks:
+      - redis
+
+  sentinel_1:
+    container_name: sentinel_1
+    image: redis:7.0.7-alpine3.17
+    command: redis-sentinel /etc/redis/sentinel.conf
+    depends_on:
+      - redis_1
+    volumes:
+      - ./sentinels/sentinel_1:/etc/redis/
+    networks:
+      - redis
+
+  sentinel_2:
+    container_name: sentinel_2
+    image: redis:7.0.7-alpine3.17
+    command: redis-sentinel /etc/redis/sentinel.conf
+    depends_on:
+      - redis_2
+    volumes:
+      - ./sentinels/sentinel_2:/etc/redis/
+    networks:
+      - redis
+
+networks:
+  redis:
+    driver: bridge
+
+volumes:
+  redis:
