@@ -8,12 +8,9 @@ services:
     build:
       context: ./app
       target: runtime
-      args:
-        - USERNAME=${USERNAME}
-        - HOMEDIR=${HOMEDIR}
-    # depends_on:
-    #   - redis_0
-    #   - sentinel_0
+    depends_on:
+      - redis_0
+      - sentinel_0
     volumes:
       - ./app:/app
     networks:

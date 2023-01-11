@@ -4,8 +4,8 @@ from kafka import KafkaProducer
 producer = KafkaProducer(bootstrap_servers='localhost:9092')
 
 # Send the messages
-for i in range(10):
-    producer.send('my_topic', b'Message {}'.format(i))
+for i in range(10000):
+    producer.send('conter_topic', b'Message {}'.format(i))
 
 print("Sent 10 messages to the topic.")
 

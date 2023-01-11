@@ -55,16 +55,23 @@ services:
     networks:
       - kafka
 
+  kafka-producer-python:
+    container_name: kafka-producer-python
+    env_file:
+      - .env
+    build:
+      context: ./app
+      target: producer_runtime
+    networks:
+      - kafka
+
   kafka-consumer-python:
     container_name: kafka-consumer-python
     env_file:
       - .env
     build:
-      context: ./app/consumer
+      context: ./app
       target: consumer_runtime
-      args:
-        - USERNAME=${USERNAME}
-        - HOMEDIR=${HOMEDIR}
     networks:
       - kafka
 

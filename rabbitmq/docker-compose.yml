@@ -1,40 +1,72 @@
 version: '3.8'
 
 services:
-  rabbit-1:
-    container_name: rabbit-1
+  rabbit_python_receiver:
+    container_name: rabbit_python
+    env_file:
+      - .env
+    build:
+      context: ./app
+      target: receiver_runtime
+    depends_on:
+      - rabbit_0
+      - rabbit_1
+      - rabbit_2
+    volumes:
+      - ./app:/app
+    networks:
+      - rabbits
+  
+  rabbit_python_sender:
+    container_name: rabbit_python
+    env_file:
+      - .env
+    build:
+      context: ./app
+      target: sender_runtime
+    depends_on:
+      - rabbit_0
+      - rabbit_1
+      - rabbit_2
+    volumes:
+      - ./app:/app
+    networks:
+      - rabbits
+
+  rabbit_1:
+    container_name: rabbit_1
     image: rabbitmq:3.11-management
-    hostname: rabbit-1
+    hostname: rabbit_1
     env_file:
       - .env
     volumes:
-      - ./config/rabbit-1/:/config/
+      - ./config/rabbit_1/:/config/
     ports:
       - 15672:15672
     networks:
       - rabbits
 
-  rabbit-2:
-    container_name: rabbit-2
+  rabbit_2:
+    container_name: rabbit_2
     image: rabbitmq:3.11-management
-    hostname: rabbit-2
+    hostname: rabbit_2
     env_file:
       - .env
     volumes:
-      - ./config/rabbit-2/:/config/
+      - ./config/rabbit_2/:/config/
     ports:
       - 15673:15672
     networks:
       - rabbits
 
-  rabbit-3:
-    container_name: rabbit-3
+  rabbit_3:
+    container_name: rabbit_3
     image: rabbitmq:3.11-management
-    hostname: rabbit-3
+    hostname: rabbit_3
     env_file:
       - .env
     volumes:
-      - ./config/rabbit-3/:/config/
+      - ./config/rabbit_3/:/config/
     ports:
       - 15674:15672
     networks:
